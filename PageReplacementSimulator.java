@@ -11,7 +11,11 @@ public class PageReplacementSimulator {
         System.out.println("Metodo Clock - " + simulateClock(pages, numFrames) + " faltas de página");
         System.out.println("Metodo NFU - " + simulateNFU(pages, numFrames) + " faltas de página");
     }
-
+// ======================================================================================================
+// FIFO - Para cada página:
+// 	* Se a página não estiver no conjunto frameSet, ocorre uma falta de página.
+// 	* Se a fila estiver cheia (frameQueue.size() == numFrames), remove a página mais antiga.
+// 	* Adiciona a nova página à fila e ao conjunto.
     public static int simulateFIFO(int[] pages, int numFrames) {
         Queue<Integer> frameQueue = new LinkedList<>();
         Set<Integer> frameSet = new HashSet<>();
@@ -31,7 +35,12 @@ public class PageReplacementSimulator {
 
         return pageFaults;
     }
-
+// ======================================================================================================
+// LRU - Para cada página:
+// 	* Se a página não estiver no conjunto frameSet, ocorre uma falta de página.
+// 	* Se a lista estiver cheia (frameList.size() == numFrames), remove a página menos recentemente usada (primeiro elemento da lista).
+// 	* Adiciona a nova página ao final da lista e ao conjunto.
+// 	* Se a página já estiver no conjunto, atualiza a posição dela na lista para o final (marcando-a como recentemente usada).
     public static int simulateLRU(int[] pages, int numFrames) {
         LinkedList<Integer> frameList = new LinkedList<>();
         Set<Integer> frameSet = new HashSet<>();
@@ -54,7 +63,13 @@ public class PageReplacementSimulator {
 
         return pageFaults;
     }
-
+// ======================================================================================================
+// Clock - Para cada página:
+// 	* Verifica se a página já está no array de quadros (frames). Se sim, marca como usada (used[i] = true).
+// 	* Se a página não estiver presente:
+// 	* Move o ponteiro até encontrar um quadro não utilizado (used[pointer] = false).
+// 	* Substitui a página nesse quadro e atualiza o ponteiro e o array used.
+// 	* Incrementa o contador de faltas de página.
     public static int simulateClock(int[] pages, int numFrames) {
         int[] frames = new int[numFrames];
         boolean[] used = new boolean[numFrames];
@@ -86,7 +101,12 @@ public class PageReplacementSimulator {
 
         return pageFaults;
     }
-
+// ======================================================================================================
+// NFU - Para cada página:
+// 	* Se a página não estiver no conjunto frameSet, ocorre uma falta de página.
+// 	* Se o conjunto estiver cheio (frameSet.size() == numFrames), remove a página menos frequentemente usada (usando pageCounter para encontrar).
+// 	* Adiciona a nova página ao conjunto e atualiza o contador de uso no mapa pageCounter.
+// 	* Incrementa o contador de uso da página atual no mapa.
     public static int simulateNFU(int[] pages, int numFrames) {
         Map<Integer, Integer> pageCounter = new HashMap<>();
         Set<Integer> frameSet = new HashSet<>();
